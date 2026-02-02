@@ -1,6 +1,6 @@
 3589. Count Prime-Gap Balanced Subarrays
 
-Link --> https://leetcode.com/problems/count-prime-gap-balanced-subarrays/submissions/1899649438/
+Link --> https://leetcode.com/problems/count-prime-gap-balanced-subarrays/submissions/1901242826/
 
 ------
 Code
@@ -8,35 +8,46 @@ Code
 
 class Solution {
     public int primeSubarray(int[] nums, int k) {
-        int count = 0;
+        TreeMap<Integer, Integer> map = new TreeMap<>();
+        Deque<Integer> primes = new ArrayDeque<>();
         int n = nums.length;
-        int maxNum=-1;
-        for(int ele : nums) maxNum=Math.max(maxNum,ele);
-        boolean[] Prime = new boolean[maxNum+1];
-        for(int i=2;i<=maxNum;i++) Prime[i]= isPrime(i);
-        for(int i=0;i<n-1;i++){
-            int min = Integer.MAX_VALUE;
-            int max = Integer.MIN_VALUE;
-            int prime = 0;
-            for(int j=i;j<n;j++){
-                int num = nums[j];
-                if(Prime[num]) {
-                    prime++;
-                    min=Math.min(min,num);
-                    max=Math.max(max,num);
-                }
-                if(prime >= 2 && (max-min) <= k) count++;
+        int ans = 0;
+        int left = 0;
+        for (int right = 0; right < n; right++) {
+            if (isPrime(nums[right])) {
+                map.put(nums[right], map.getOrDefault(nums[right], 0) + 1);
+                primes.add(right);
             }
-        }
-        return count;
-    }
-    public boolean isPrime(int val) {
-        if (val <= 1) return false;
-        if (val == 2) return true;
-        if (val % 2 == 0) return false;
+            while (map.size() > 0 && map.lastKey() - map.firstKey() > k) {
+                if (isPrime(nums[left])) {
+                    int freq = map.get(nums[left]);
+                    freq--;
+                    if (freq == 0)
+                        map.remove(nums[left]);
+                    else
+                        map.put(nums[left], freq);
+                    primes.poll();
+                }
+                left++;
+            }
+            if (primes.size() >= 2) {
+                int firstPos = primes.pollLast();
+                int secondPos = primes.peekLast();
+                ans += secondPos - left + 1;
+                primes.add(firstPos);
+            }
 
-        for (int i = 3; i * i <= val; i += 2) {
-            if (val % i == 0) return false;
+        }
+        return ans;
+    }
+
+    public static boolean isPrime(int n) {
+        if (n <= 1)
+            return false;
+        for (int i = 2; i * i <= n; i++) {
+            if (n % i == 0) {
+                return false;
+            }
         }
         return true;
     }
