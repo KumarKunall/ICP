@@ -8,18 +8,18 @@ Code
 
 class Solution {
     public int timeRequiredToBuy(int[] tickets, int k) {
-        int res = 0;
-        int n = tickets.length;
-        Queue<int[]> qu = new LinkedList<>();
-        for(int i=0;i<n;i++) qu.add(new int[]{i,tickets[i]});
-
-        while(!qu.isEmpty()){
-            int[] temp = qu.remove();
-            temp[1]--;
-            if(temp[0]==k && temp[1]==0) return res+1;
-            res++;
-            if(temp[1]!=0) qu.add(temp);
+        Queue<int[]> q = new LinkedList<>();
+        for(int i=0; i<tickets.length; i++){
+            q.add(new int[]{i, tickets[i]});
         }
-        return res;
+        int cnt = 1;
+        while(!q.isEmpty()){
+            int ans[] = q.remove();
+            ans[1]--;
+            if(ans[0] == k && ans[1] == 0) return cnt;
+            cnt++;
+            if(ans[1] != 0) q.add(new int[]{ans[0], ans[1]});
+        }
+        return cnt;
     }
 }
