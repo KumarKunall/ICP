@@ -1,19 +1,26 @@
 2696. Minimum String Length After Removing Substrings
 
-https://leetcode.com/problems/minimum-string-length-after-removing-substrings/submissions/1889530266/
+https://leetcode.com/problems/minimum-string-length-after-removing-substrings/submissions/1889554074/
 
 class Solution {
     public int minLength(String s) {
         Stack<Character> st = new Stack<>();
-        for(char ch : s.toCharArray()){
+        st.push(s.charAt(0));
+        char prev = '\0';
+        for(int i=1; i<s.length(); i++){
             if(!st.isEmpty()){
-                int c = st.peek();
-                if((c=='A' && ch == 'B') || (c=='C' && ch == 'D')){
-                    st.pop();
-                    continue;
+                prev = st.peek();
+            }
+            st.push(s.charAt(i));
+            while((!st.isEmpty() && prev == 'A' && st.peek() == 'B') || (!st.isEmpty() && prev == 'C' && st.peek() == 'D')){
+                st.pop();
+                st.pop();
+                if (!st.isEmpty()) {
+                    prev = st.peek();
+                } else {
+                    prev = '\0';
                 }
             }
-            st.push(ch);
         }
         return st.size();
     }
