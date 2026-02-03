@@ -1,52 +1,44 @@
 1856. Maximum Subarray Min-Product
 
-https://leetcode.com/problems/maximum-subarray-min-product/submissions/1890784395/
+https://leetcode.com/problems/maximum-subarray-min-product/submissions/1890708120/
 
 class Solution {
     public int maxSumMinProduct(int[] nums) {
-        int n = nums.length;
-        
-        
-        long[] prefixSum = new long[n];
-        prefixSum[0]=nums[0];
-        for(int i=1;i<n;i++) prefixSum[i] = prefixSum[i-1]+nums[i];
-
         Stack<Integer> st = new Stack<>();
-        int[] leftSmallIdx = new int[n];
-        for(int i=0;i<n;i++){
+        long pref[] = new long[nums.length+1];
+        for(int i=0; i<nums.length; i++){
+            pref[i+1] = pref[i]+nums[i];
+        }
+        int nse[] = new int[nums.length];
+        int pse[] = new int[nums.length];
+        nse[nums.length-1] = nums.length;
+        st.push(nums.length-1);
+        for(int i=nums.length-2; i>=0; i--){
             while(!st.isEmpty() && nums[i] <= nums[st.peek()]){
                 st.pop();
             }
-            if(!st.isEmpty()){
-                leftSmallIdx[i]=st.peek();
-            }else{
-                leftSmallIdx[i]=-1;
-            }
+            if(st.isEmpty()) nse[i] = nums.length;
+            else nse[i] = st.peek();
             st.push(i);
         }
-        st.clear();
-        int[] rightSmallIdx = new int[n];
-        for(int i=n-1;i>=0;i--){
+        while(!st.isEmpty()) st.pop();
+        pse[0] = -1;
+        st.push(0);
+        for(int i=1; i<nums.length; i++){
             while(!st.isEmpty() && nums[i] <= nums[st.peek()]){
                 st.pop();
             }
-            if(!st.isEmpty()){
-                rightSmallIdx[i]=st.peek();
-            }else{
-                rightSmallIdx[i]=n;
-            }
+            if(st.isEmpty()) pse[i] = -1;
+            else pse[i] = st.peek();
             st.push(i);
         }
-
-        long result = 0;
-        for(int i=0;i<n;i++){
-            int leftIdx = leftSmallIdx[i];
-            int rightIdx = rightSmallIdx[i];
-            long a = prefixSum[rightIdx-1];
-            if(leftIdx != -1) a -= prefixSum[leftIdx];
-            long temp = nums[i] * a;
-            result=Math.max(result,temp);
+        long ans = 0;
+        for(int i=0; i<nums.length; i++){
+            int left = pse[i]+1;
+            int right = nse[i]-1;
+            long sum = pref[right+1]-pref[left];
+            ans = Math.max(ans, nums[i]*sum);
         }
-        return (int) (result % 1000000007);
+        return (int)(ans%1000000007);
     }
 }
