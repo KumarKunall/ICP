@@ -1,33 +1,39 @@
 907. Sum of Subarray Minimums
 
-https://leetcode.com/problems/sum-of-subarray-minimums/submissions/1891406269/
+https://leetcode.com/problems/sum-of-subarray-minimums/submissions/1891195550/
 
 class Solution {
     public int sumSubarrayMins(int[] arr) {
         Stack<Integer> st = new Stack<>();
-        int n=arr.length;
-        int[] psei=new int[n];
-        for(int i=0;i<n;i++){
-            while(!st.isEmpty() && arr[st.peek()] > arr[i]) st.pop();
-            if(!st.isEmpty()) psei[i]=st.peek();
-            else psei[i]=-1;
+        int nse[] = new int[arr.length];
+        nse[arr.length-1] = arr.length;
+        st.push(arr.length-1);
+        for(int i=arr.length-2; i>=0; i--){
+            while(!st.isEmpty() && arr[i] <= arr[st.peek()]){
+                st.pop();
+            }
+            if(st.isEmpty()) nse[i] = arr.length;
+            else nse[i] = st.peek();
             st.push(i);
         }
-        st.clear();
-        int[] nsei=new int[n];
-        for(int i=n-1;i>=0;i--){
-            while(!st.isEmpty() && arr[st.peek()] >= arr[i]) st.pop();
-            if(!st.isEmpty()) nsei[i]=st.peek();
-            else nsei[i]=n;
+        while(!st.isEmpty()) st.pop();
+        int pse[] = new int[arr.length];
+        pse[0] = -1;
+        st.push(0);
+        for(int i=1; i<arr.length; i++){
+            while(!st.isEmpty() && arr[i] < arr[st.peek()]){
+                st.pop();
+            }
+            if(st.isEmpty()) pse[i] = -1;
+            else pse[i] = st.peek();
             st.push(i);
         }
-        long res = 0;
-        int MOD = 1000000007;
-        for(int i=0;i<n;i++){
-            long left = i - psei[i];
-            long right = nsei[i] - i;
-            res = (res + (arr[i] * left % MOD) * right % MOD) % MOD;
+        long ans = 0;
+        for(int i=0; i<arr.length; i++){
+            long left = i - pse[i];
+            long right = nse[i] - i;
+            ans = (ans + arr[i]*left * right) % 1000000007;
         }
-        return (int)(res);
+        return (int)ans;
     }
 }
