@@ -1,21 +1,17 @@
 <<<< 121. Best Time to Buy and Sell Stock >>>>
-<<<< Link : https://leetcode.com/problems/best-time-to-buy-and-sell-stock/submissions/1884018529/ >>>>
+<<<< Link : https://leetcode.com/problems/best-time-to-buy-and-sell-stock/submissions/1884940697/ >>>>
 
 -----------------------------------------------
 CODE
 -------------------------------------------
 class Solution {
     public int maxProfit(int[] prices) {
-        int res = 0;
-        int n=prices.length;
-        int var = Integer.MAX_VALUE;
-        for(int i=0;i<n;i++){
-            if(var<prices[i]){
-                res=Math.max(res,prices[i]-var);
-            }else{
-                var=prices[i];
-            }
+        int buy = -prices[0];
+        int sell = 0;
+        for (int i = 1; i < prices.length; i++) {
+            buy = Math.max(buy, -prices[i]);
+            sell = Math.max(sell, buy + prices[i]);
         }
-        return res;
+        return sell;
     }
 }
